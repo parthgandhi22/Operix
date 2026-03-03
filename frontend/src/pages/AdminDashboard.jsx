@@ -36,6 +36,29 @@ function AdminDashboard() {
     fetchTasks();
   }, []);
 
+  // ===============================
+  // Delete Task
+  // ===============================
+  const handleDelete = async (taskId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`/tasks/delete/${taskId}`);
+
+      // Optimistic UI update
+      setTasks((prev) =>
+        prev.filter((task) => task._id !== taskId)
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting task");
+    }
+  };
+
   const totalManagers = users.filter(u => u.role === "manager").length;
   const totalEmployees = users.filter(u => u.role === "employee").length;
   const completedTasks = tasks.filter(t => t.status === "Completed").length;
@@ -48,7 +71,7 @@ function AdminDashboard() {
 
   return (
     <>
-      <Navbar role="Admin" />
+      <Navbar role="admin" />
 
       <div className="dashboard-container">
         <h1>Admin Control Panel</h1>
@@ -67,29 +90,73 @@ function AdminDashboard() {
         <div className="section" style={{ marginTop: "30px" }}>
           <h2>All Users</h2>
 
-          {users.map(user => (
-            <div key={user._id} className="task-row">
-              <span>{user.name}</span>
-              <span>{user.email}</span>
-              <span className="badge">{user.role}</span>
-            </div>
-          ))}
+          {users.length === 0 ? (
+            <p>No users found.</p>
+          ) : (
+            users.map(user => (
+              <div key={user._id} className="task-row">
+                <span>{user.name}</span>
+                <span>{user.email}</span>
+                <span className="badge">{user.role}</span>
+              </div>
+            ))
+          )}
         </div>
 
         {/* ===== Tasks Section ===== */}
         <div className="section" style={{ marginTop: "30px" }}>
           <h2>All Tasks</h2>
 
-          {tasks.map(task => (
-            <div key={task._id} className="task-row">
-              <span>{task.title}</span>
-              <span>{task.assignedBy?.name}</span>
-              <span>{task.assignedTo?.name}</span>
-              <span className={`badge ${getStatusClass(task.status)}`}>
-                {task.status}
-              </span>
-            </div>
-          ))}
+          {tasks.length === 0 ? (
+            <p>No tasks available.</p>
+          ) : (
+            tasks.map(task => {
+              const statusClass = getStatusClass(task.status);
+
+              return (
+                <div
+                  key={task._id}
+                  className={`admin-task-card ${statusClass}`}
+                >
+                  {/* Header */}
+                  <div className="admin-card-header">
+                    <h3>{task.title}</h3>
+
+                    <button
+                      className="delete-icon-btn"
+                      onClick={() => handleDelete(task._id)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Body */}
+                  <div className="admin-task-body">
+
+                    <div className="task-meta">
+                      <span>👤 {task.assignedTo?.name}</span>
+                      <span>🧑‍💼 {task.assignedBy?.name}</span>
+                    </div>
+
+                    <div className="task-footer">
+                      <span className="deadline">
+                        📅 {
+                          task.deadline
+                            ? new Date(task.deadline).toLocaleDateString()
+                            : "No Deadline"
+                        }
+                      </span>
+
+                      <span className={`status-pill ${statusClass}`}>
+                        {task.status}
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </>

@@ -1,22 +1,19 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "../axiosConfig";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+} from "@hello-pangea/dnd";
 import "../index.css";
 
 function EmployeeDashboard() {
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  // ===============================
-  // Fetch My Tasks
-  // ===============================
   const fetchTasks = async () => {
-    try {
-      const res = await axios.get("/tasks/my-tasks");
-      setTasks(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+    const res = await axios.get("/tasks/my-tasks");
+    setTasks(res.data);
   };
 
   useEffect(() => {
@@ -24,107 +21,94 @@ function EmployeeDashboard() {
   }, []);
 
   // ===============================
-  // Update Status
+  // Drag End Handler
   // ===============================
-  const updateStatus = async (taskId, newStatus) => {
-    try {
-      setLoading(true);
+  const onDragEnd = async (result) => {
+    if (!result.destination) return;
 
+    const taskId = result.draggableId;
+    const newStatus = result.destination.droppableId;
+
+    // OPTIMISTIC UPDATE
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task._id === taskId
+          ? { ...task, status: newStatus }
+          : task
+      )
+    );
+
+    try {
       await axios.patch(`/tasks/update-status/${taskId}`, {
         status: newStatus,
       });
-
-      fetchTasks();
-
     } catch (err) {
-      console.error(err.response?.data || err.message);
-      alert("Error updating status");
-    } finally {
-      setLoading(false);
+      console.error(err);
+      fetchTasks(); // rollback if error
     }
   };
 
-  const completedCount = tasks.filter(t => t.status === "Completed").length;
-  const pendingCount = tasks.filter(t => t.status !== "Completed").length;
+  const getTasksByStatus = (status) =>
+    tasks
+      .filter((task) => task.status === status)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <>
       <Navbar role="Employee" />
 
-      <div className="dashboard-container">
-        <h1>My Workspace</h1>
+      <div className="kanban-container">
+        <h1>My Kanban Board</h1>
 
-        {/* ===== Overview ===== */}
-        <div className="stats-grid">
-          <div className="card">📋 My Tasks: {tasks.length}</div>
-          <div className="card">⏳ Pending: {pendingCount}</div>
-          <div className="card">✅ Completed: {completedCount}</div>
-        </div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="kanban-board">
 
-        {/* ===== Task List ===== */}
-        <div className="section" style={{ marginTop: "30px" }}>
-          <h2>My Tasks</h2>
+            {["To Do", "In Progress", "Completed"].map((status) => (
+              <Droppable droppableId={status} key={status}>
+                {(provided) => (
+                  <div
+                    className="kanban-column"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    <h3>{status}</h3>
 
-          {tasks.length === 0 ? (
-            <p>No tasks assigned.</p>
-          ) : (
-            tasks.map(task => (
-              <div key={task._id} className="task-row">
-                <span>{task.title}</span>
+                    {getTasksByStatus(status).map((task, index) => (
+                      <Draggable
+                        key={task._id}
+                        draggableId={task._id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            className="kanban-card"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <h4>{task.title}</h4>
+                            <p>{task.description}</p>
+                            <small>
+                              {task.deadline
+                                ? new Date(task.deadline).toLocaleDateString()
+                                : "No Deadline"}
+                            </small>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
 
-                <span>
-                  {task.deadline
-                    ? new Date(task.deadline).toLocaleDateString()
-                    : "No Deadline"}
-                </span>
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            ))}
 
-                <span className={`badge ${getStatusClass(task.status)}`}>
-                  {task.status}
-                </span>
-
-                {/* Status Buttons */}
-                <div>
-                  {task.status !== "To Do" && (
-                    <button
-                      className="small-btn"
-                      onClick={() => updateStatus(task._id, "To Do")}
-                    >
-                      To Do
-                    </button>
-                  )}
-
-                  {task.status !== "In Progress" && (
-                    <button
-                      className="small-btn"
-                      onClick={() => updateStatus(task._id, "In Progress")}
-                    >
-                      In Progress
-                    </button>
-                  )}
-
-                  {task.status !== "Completed" && (
-                    <button
-                      className="small-btn"
-                      onClick={() => updateStatus(task._id, "Completed")}
-                    >
-                      Complete
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+          </div>
+        </DragDropContext>
       </div>
     </>
   );
-}
-
-function getStatusClass(status) {
-  if (status === "To Do") return "todo";
-  if (status === "In Progress") return "inprogress";
-  if (status === "Completed") return "completed";
-  return "";
 }
 
 export default EmployeeDashboard;

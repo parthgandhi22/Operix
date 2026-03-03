@@ -114,4 +114,39 @@ router.patch("/update-status/:id", verifyToken, checkRole("employee"), async (re
   }
 );
 
+// ===============================
+// DELETE TASK (Manager & Admin)
+// ===============================
+router.delete(
+  "/delete/:id",
+  verifyToken,
+  checkRole("manager", "admin"),
+  async (req, res) => {
+    try {
+      const task = await Task.findById(req.params.id);
+
+      if (!task) {
+        return res.status(404).json({ msg: "Task not found" });
+      }
+
+      // If manager → can delete only own tasks
+      if (
+        req.user.role === "manager" &&
+        task.assignedBy.toString() !== req.user.id
+      ) {
+        return res.status(403).json({
+          msg: "Not allowed to delete this task",
+        });
+      }
+
+      await task.deleteOne();
+
+      res.json({ msg: "Task deleted successfully" });
+
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
 module.exports = router;

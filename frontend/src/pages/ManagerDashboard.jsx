@@ -4,6 +4,8 @@ import axios from "../axiosConfig";
 import "../index.css";
 
 function ManagerDashboard() {
+  const [tasks, setTasks] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -12,12 +14,8 @@ function ManagerDashboard() {
     priority: "Medium",
   });
 
-  const [tasks, setTasks] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(false);
-
   // ===============================
-  // Fetch Manager Tasks
+  // Fetch Tasks
   // ===============================
   const fetchTasks = async () => {
     try {
@@ -29,7 +27,7 @@ function ManagerDashboard() {
   };
 
   // ===============================
-  // Fetch Employees for Dropdown
+  // Fetch Employees
   // ===============================
   const fetchEmployees = async () => {
     try {
@@ -46,22 +44,23 @@ function ManagerDashboard() {
   }, []);
 
   // ===============================
-  // Handle Form Change
+  // Handle Input Change
   // ===============================
   const handleChange = (e) => {
     setTask({ ...task, [e.target.name]: e.target.value });
   };
 
   // ===============================
-  // Create Task API Call
+  // Create Task
   // ===============================
   const handleCreateTask = async () => {
+    if (!task.title || !task.assignedTo) {
+      alert("Title and Employee are required");
+      return;
+    }
+
     try {
-      setLoading(true);
-
       await axios.post("/tasks/create", task);
-
-      alert("Task Created Successfully");
 
       setTask({
         title: "",
@@ -72,18 +71,39 @@ function ManagerDashboard() {
       });
 
       fetchTasks();
-
     } catch (err) {
-      console.error(err.response?.data || err.message);
+      console.error(err);
       alert("Error creating task");
-    } finally {
-      setLoading(false);
     }
   };
 
   // ===============================
-  // Safe Overdue Count
+  // Delete Task
   // ===============================
+  const handleDelete = async (taskId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`/tasks/delete/${taskId}`);
+
+      setTasks((prev) =>
+        prev.filter((task) => task._id !== taskId)
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting task");
+    }
+  };
+
+  const getTasksByStatus = (status) =>
+    tasks
+      .filter((task) => task.status === status)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   const overdueCount = tasks.filter(
     (t) =>
       t.deadline &&
@@ -93,12 +113,12 @@ function ManagerDashboard() {
 
   return (
     <>
-      <Navbar role="Manager" />
+      <Navbar role="manager" />
 
-      <div className="dashboard-container">
+      <div className="kanban-container">
         <h1>Manager Control Panel</h1>
 
-        {/* ===== Overview Section ===== */}
+        {/* ===== Stats ===== */}
         <div className="stats-grid">
           <div className="card">📋 Total Tasks: {tasks.length}</div>
           <div className="card">
@@ -112,7 +132,7 @@ function ManagerDashboard() {
         </div>
 
         {/* ===== Create Task Section ===== */}
-        <div className="section">
+        <div className="section" style={{ marginTop: "30px" }}>
           <h2>Create New Task</h2>
 
           <input
@@ -124,12 +144,11 @@ function ManagerDashboard() {
 
           <input
             name="description"
-            placeholder="Task Description"
+            placeholder="Description"
             value={task.description}
             onChange={handleChange}
           />
 
-          {/* Employee Dropdown */}
           <select
             name="assignedTo"
             value={task.assignedTo}
@@ -160,45 +179,48 @@ function ManagerDashboard() {
             <option>Low</option>
           </select>
 
-          <button onClick={handleCreateTask} disabled={loading}>
-            {loading ? "Creating..." : "Create Task"}
+          <button onClick={handleCreateTask}>
+            Create Task
           </button>
         </div>
 
-        {/* ===== Task Monitoring Section ===== */}
-        <div className="section" style={{ marginTop: "30px" }}>
-          <h2>Team Tasks</h2>
+        {/* ===== Kanban Board ===== */}
+        <div className="kanban-board" style={{ marginTop: "40px" }}>
+          {["To Do", "In Progress", "Completed"].map((status) => (
+            <div className="kanban-column" key={status}>
+              <h3>{status}</h3>
 
-          {tasks.length === 0 ? (
-            <p>No tasks yet.</p>
-          ) : (
-            tasks.map((t) => (
-              <div key={t._id} className="task-row">
-                <span>{t.title}</span>
-                <span>{t.assignedTo?.name || "Employee"}</span>
-                <span className={`badge ${getStatusClass(t.status)}`}>
-                  {t.status}
-                </span>
-                <span>
-                  {t.deadline
-                    ? new Date(t.deadline).toLocaleDateString()
-                    : "No Deadline"}
-                </span>
-                <span>{t.priority}</span>
-              </div>
-            ))
-          )}
+              {getTasksByStatus(status).map((task) => (
+                <div key={task._id} className="kanban-card">
+  
+                  <div className="card-header">
+                    <h4>{task.title}</h4>
+
+                    <button
+                      className="delete-icon-btn"
+                      onClick={() => handleDelete(task._id)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <p>👤 {task.assignedTo?.name}</p>
+
+                  <small className="deadline-text">
+                    {task.deadline
+                      ? new Date(task.deadline).toLocaleDateString()
+                      : "No Deadline"}
+                  </small>
+
+                </div>
+                
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </>
   );
-}
-
-function getStatusClass(status) {
-  if (status === "To Do") return "todo";
-  if (status === "In Progress") return "inprogress";
-  if (status === "Completed") return "completed";
-  return "";
 }
 
 export default ManagerDashboard;

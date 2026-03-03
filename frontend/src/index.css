@@ -2,6 +2,7 @@ body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   background: linear-gradient(to right, #1e3c72, #2a5298);
+  
 }
 
 .auth-container {
@@ -183,4 +184,278 @@ body {
   background: #444;
   color: white;
   font-size: 11px;
+}
+
+.kanban-container {
+  padding: 30px;
+  color: white;
+}
+
+.kanban-board {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.kanban-column {
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 10px;
+  width: 33%;
+  min-height: 400px;
+}
+
+.kanban-column h3 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.kanban-card {
+  background: white;
+  color: black;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  cursor: grab;
+}
+
+.kanban-card h4 {
+  margin: 0 0 5px 0;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: #111827;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  box-sizing: border-box;  
+  overflow-x: hidden;       
+  z-index: 100;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.logo {
+  margin: 0;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+
+  background: linear-gradient(
+    90deg,
+    #ff6a00,
+    #ff9f1c,
+    #ff4d6d
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.nav-link:hover {
+  color: #3b82f6;
+}
+
+.nav-link.active {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-info {
+  font-size: 14px;
+}
+
+.logout-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #ef4444;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-icon-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: 0.2s;
+}
+
+.delete-icon-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.deadline-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ===============================
+   ADMIN TASK CARD
+================================= */
+
+.admin-task-card {
+  background: white;
+  color: black;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.admin-task-body {
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.admin-task-body p {
+  margin: 3px 0;
+}
+
+/* ===============================
+   ENHANCED ADMIN TASK CARD
+================================= */
+
+.admin-task-card {
+  background: white;
+  color: #111;
+  padding: 18px;
+  border-radius: 14px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: 0.25s ease;
+  position: relative;
+  border-left: 6px solid transparent;
+}
+
+.admin-task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* Left colored status border */
+.admin-task-card.to-do {
+  border-left-color: #f59e0b;
+}
+
+.admin-task-card.in-progress {
+  border-left-color: #3b82f6;
+}
+
+.admin-task-card.completed {
+  border-left-color: #22c55e;
+}
+
+/* Header */
+.admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Meta Info */
+.task-meta {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Footer */
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.deadline {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+/* Status Pill */
+.status-pill {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: white;
+}
+
+.status-pill.to-do {
+  background: #f59e0b;
+}
+
+.status-pill.in-progress {
+  background: #3b82f6;
+}
+
+.status-pill.completed {
+  background: #22c55e;
+}
+
+/* Delete Button */
+.delete-icon-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 4px 8px;
+  transition: 0.2s;
+}
+
+.delete-icon-btn:hover {
+  background: rgba(239,68,68,0.15);
 }

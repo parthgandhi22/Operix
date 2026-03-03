@@ -56,10 +56,13 @@ router.post("/logout", (req, res) => {
 const { verifyToken } = require("../middleware/authMiddleware");
 
 // PROTECTED ROUTE
-router.get("/me", verifyToken, (req, res) => {
+router.get("/me", verifyToken, async (req, res) => {
+  const user = await User.findById(req.user.id).select("name role");
+  
   res.json({
-    id: req.user.id,
-    role: req.user.role
+    id: user.id,
+    name:user.name,
+    role: user.role
   });
 });
 
