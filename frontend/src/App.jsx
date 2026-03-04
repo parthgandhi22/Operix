@@ -11,6 +11,7 @@ function App() {
   return (
       <Routes>
         <Route path="/" element={<Register />} />
+        
         <Route path="/login" element={<Login />} />
 
         <Route
@@ -21,7 +22,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
+
 
         <Route
           path="/dashboard/manager"
