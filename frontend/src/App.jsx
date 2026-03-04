@@ -11,7 +11,6 @@ function App() {
   return (
       <Routes>
         <Route path="/" element={<Register />} />
-        
         <Route path="/login" element={<Login />} />
 
         <Route
