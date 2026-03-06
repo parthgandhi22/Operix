@@ -16,6 +16,7 @@ const GoogleRoutes = require("./routes/googleRoutes");
 const PayrollRoutes = require("./routes/payrollRoutes");
 const AnnouncementRoutes = require("./routes/announcementRoutes");
 const MessageRoutes = require("./routes/messageRoutes");
+const FinanceRoutes = require("./routes/financeRoutes");
 // the below two routes are for testing in postman only, they are not used in the frontend
 const SalaryRoutes = require("./routes/salaryRoutes");
 const EmailRoutes = require("./routes/emailRoutes");
@@ -96,6 +97,7 @@ app.use("/api/google", GoogleRoutes);
 app.use("/api/payroll", PayrollRoutes);
 app.use("/api/admin", AnnouncementRoutes);
 app.use("/api/messages", MessageRoutes);
+app.use("/api/finance", FinanceRoutes);
 
 // testing routes
 app.use("/api/salary", SalaryRoutes);

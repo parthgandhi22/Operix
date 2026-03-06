@@ -45,6 +45,21 @@ function EmployeeDashboard() {
     }
   };
 
+  const deleteMessage = async(id)=>{
+
+    try{
+
+      await axios.delete(`/messages/delete/${id}`);
+
+      fetchMessages();
+      fetchUnread();
+
+    }catch(err){
+      console.error(err);
+    }
+
+  };
+
 
   // ===============================
   // Fetch Unread Counter
@@ -363,13 +378,22 @@ function EmployeeDashboard() {
 
             messages.map((msg) => (
 
-              <div
-                key={msg._id}
-                className={`message-card ${msg.isRead ? "" : "unread"}`}
-                onClick={() => markAsRead(msg._id)}
-              >
+              <div key={msg._id} className={`message-card ${msg.isRead ? "" : "unread"}`}>
 
-                <p>{msg.message}</p>
+                <div className="message-top">
+
+                  <p onClick={()=>markAsRead(msg._id)}>
+                    {msg.message}
+                  </p>
+
+                  <button
+                    className="delete-msg-btn"
+                    onClick={()=>deleteMessage(msg._id)}
+                  >
+                    ✕
+                  </button>
+
+                </div>
 
                 <small>
                   {new Date(msg.createdAt).toLocaleString()}

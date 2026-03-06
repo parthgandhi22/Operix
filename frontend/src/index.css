@@ -878,26 +878,116 @@ body {
   border-radius:50%;
 }
 
-.live-notification{
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #111;
-  color: white;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-  z-index: 9999;
+.section input{
+  padding:8px;
+  margin-right:10px;
+  border-radius:6px;
 }
 
-@keyframes slideIn{
-  from{
-    transform: translateX(100%);
-    opacity:0;
-  }
-  to{
-    transform: translateX(0);
-    opacity:1;
-  }
+.section button{
+  padding:8px 14px;
+  background:#22c55e;
+  border:none;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.burnrate-section{
+  margin-top:40px;
+}
+
+.burnrate-controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.burnrate-controls input{
+  padding:8px;
+  border-radius:6px;
+  border:none;
+}
+
+.burnrate-controls button{
+  background:#22c55e;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.burnrate-controls button:hover{
+  background:#16a34a;
+}
+
+.burnrate-chart-container{
+  width:600px;
+  height:350px;
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.15);
+}
+
+.burnrate-chart{
+  width:600px;
+  height:350px;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+.delete-log-btn{
+  background:#ef4444;
+  border:none;
+  color:white;
+  padding:4px 8px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.delete-log-btn:hover{
+  background:#dc2626;
+}
+
+.message-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.delete-msg-btn{
+  background:#ef4444;
+  border:none;
+  color:white;
+  padding:3px 7px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.delete-msg-btn:hover{
+  background:#dc2626;
+}
+
+.navbar-tabs{
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.navbar-tabs button{
+  background:transparent;
+  border:none;
+  color:white;
+  font-size:14px;
+  cursor:pointer;
+  padding:6px 10px;
+  border-radius:6px;
+}
+
+.navbar-tabs button:hover{
+  background:#334155;
 }

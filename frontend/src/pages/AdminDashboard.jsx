@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "../axiosConfig";
 import socket from "../socket";
+import BurnRateChart from "../components/BurnRateChart";
 import "../index.css";
 
 function AdminDashboard() {
@@ -47,6 +48,24 @@ function AdminDashboard() {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const deleteLog = async(id)=>{
+
+    const confirmDelete = window.confirm("Delete this audit log?");
+
+    if(!confirmDelete) return;
+
+    try{
+
+      await axios.delete(`/audit/delete/${id}`);
+
+      fetchLogs();
+
+    }catch(err){
+      console.error(err);
+    }
+
   };
 
   // ===============================
@@ -182,7 +201,7 @@ function AdminDashboard() {
     <>
       <Navbar role="admin" />
 
-      <div className="dashboard-container">
+      <div id="overview" className="dashboard-container">
 
         <h1>Admin Control Panel</h1>
 
@@ -311,7 +330,7 @@ function AdminDashboard() {
 
         {/* ===== Payroll ===== */}
 
-        <div className="section" style={{ marginTop: "40px" }}>
+        <div id="payroll" className="section" style={{ marginTop: "40px" }}>
 
           <h2>Payroll Management</h2>
 
@@ -389,17 +408,17 @@ function AdminDashboard() {
 
         {/* ===== Audit Logs ===== */}
 
-        <div className="section" style={{ marginTop: "40px" }}>
+        <div id="audit" className="section" style={{ marginTop: "40px" }}>
 
           <h2>System Activity Timeline</h2>
 
           <div className="audit-timeline">
 
-            {logs.map((log) => {
+            {logs.map((log)=>{
 
               const visual = getLogVisual(log.action);
 
-              return (
+              return(
 
                 <div key={log._id} className="timeline-item">
 
@@ -414,18 +433,21 @@ function AdminDashboard() {
                     </div>
 
                     <div className="audit-meta">
-
-                      <span className="audit-role">
-                        {log.role}
-                      </span>
+                      <span className="audit-role">{log.role}</span>
 
                       <span>
                         {new Date(log.createdAt).toLocaleString()}
                       </span>
-
                     </div>
 
                   </div>
+
+                  <button
+                    className="delete-log-btn"
+                    onClick={()=>deleteLog(log._id)}
+                  >
+                    ✕
+                  </button>
 
                 </div>
 
@@ -437,7 +459,23 @@ function AdminDashboard() {
 
         </div>
 
+          {/* ===== Burn Rate Prediction ===== */}
+
+          <div id="cash" className="section" style={{ marginTop: "40px" }}>
+
+            <h2>Company Burn Rate Prediction</h2>
+
+            <p className="burnrate-desc">
+              Predicts when the company will run out of cash based on current spending.
+            </p>
+
+
+            <BurnRateChart />
+
+          </div>
+
       </div>
+      
     </>
   );
 }

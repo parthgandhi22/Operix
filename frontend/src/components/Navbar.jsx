@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import axios from "../axiosConfig";
 import "../index.css";
 
 function Navbar({ role }) {
+
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [user, setUser] = useState(null);
 
   const fetchUser = async () => {
@@ -25,9 +28,20 @@ function Navbar({ role }) {
     navigate("/login");
   };
 
+  // smooth scroll
+  const scrollTo = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="navbar">
+
+      {/* LEFT SIDE */}
       <div className="navbar-left">
+
         <h2 className="logo">CONSOLE</h2>
 
         {role === "admin" && (
@@ -47,9 +61,39 @@ function Navbar({ role }) {
             My Board
           </NavLink>
         )}
+
       </div>
 
+
+      {/* ADMIN TABS */}
+      {role === "admin" && location.pathname.includes("/dashboard/admin") && (
+
+        <div className="navbar-tabs">
+
+          <button onClick={() => scrollTo("overview")}>
+            Overview
+          </button>
+
+          <button onClick={() => scrollTo("payroll")}>
+            Payroll
+          </button>
+
+          <button onClick={() => scrollTo("audit")}>
+            Audit Logs
+          </button>
+
+          <button onClick={() => scrollTo("cash")}>
+            Cash Prediction
+          </button>
+
+        </div>
+
+      )}
+
+
+      {/* RIGHT SIDE */}
       <div className="navbar-right">
+
         {user && (
           <span className="user-info">
             👤 {user.name} ({user.role})
@@ -59,7 +103,9 @@ function Navbar({ role }) {
         <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
+
       </div>
+
     </div>
   );
 }

@@ -16,4 +16,18 @@ router.get("/logs", verifyToken, checkRole("admin"), async (req, res) => {
   }
 );
 
+router.delete("/delete/:id", verifyToken, checkRole("admin"), async (req,res)=>{
+
+  try{
+
+    await AuditLog.findByIdAndDelete(req.params.id);
+
+    res.json({msg:"Log deleted successfully"});
+
+  }catch(err){
+    res.status(500).json({error:err.message});
+  }
+
+});
+
 module.exports = router;
