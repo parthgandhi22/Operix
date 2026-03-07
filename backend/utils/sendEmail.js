@@ -8,36 +8,25 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const sendEmail = async (to, subject, html, filePath, pdfBuffer) => {
+async function sendEmail(to, subject, htmlContent, attachmentPath = null) {
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject,
-    html
+    from: `"CONSOLE BMS HR" <${process.env.EMAIL_USER}>`,
+    to: to,
+    subject: subject,
+    html: htmlContent
   };
 
-  if (pdfBuffer) {
-
+  if (attachmentPath) {
     mailOptions.attachments = [
       {
         filename: "salary-slip.pdf",
-        content: pdfBuffer
+        path: attachmentPath
       }
     ];
-
-  } else if (filePath) {
-
-    mailOptions.attachments = [
-      {
-        path: filePath
-      }
-    ];
-
   }
 
   await transporter.sendMail(mailOptions);
-
-};
+}
 
 module.exports = sendEmail;

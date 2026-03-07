@@ -54,126 +54,58 @@ router.get("/my-slips", verifyToken, async (req,res)=>{
 
 });
 
-
 // ===============================
 // SEND EMAIL
 // ===============================
-const PDFDocument = require("pdfkit");
-const fs = require("fs");
-const path = require("path");
-
 router.post("/send/:id", verifyToken, checkRole("admin"), async (req, res) => {
+
   try {
 
-    const slip = await SalarySlip.findById(req.params.id).populate("employee");
-
-    if (!slip) {
-      return res.status(404).json({ error: "Slip not found" });
-    }
+    const slip = await SalarySlip.findById(req.params.id)
+      .populate("employee");
 
     const emp = slip.employee;
 
-    if (!emp) {
-      return res.status(400).json({ error: "Employee not found" });
-    }
+    const html = salaryEmailTemplate(
+      emp.name,
+      slip.month,
+      "63000"
+    );
 
-    const baseSalary = 60000;
-    const bonus = 5000;
-    const deductions = 2000;
+    await sendEmail(
+      emp.email,
+      `Salary Slip - ${slip.month}`,
+      html,
+      slip.filePath
+    );
 
-    const netSalary = baseSalary + bonus - deductions;
+    slip.sent = true;
 
-    // ===============================
-    // DELETE OLD FILE (if exists)
-    // ===============================
-
-    if (slip.filePath) {
-
-      const filePath = path.join(__dirname, "..", slip.filePath);
-
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-
-    }
-
-    // ===============================
-    // GENERATE PDF IN MEMORY
-    // ===============================
-
-    const doc = new PDFDocument();
-
-    let buffers = [];
-
-    doc.on("data", buffers.push.bind(buffers));
-
-    doc.on("end", async () => {
-
-      const pdfData = Buffer.concat(buffers);
-
-      const html = salaryEmailTemplate(
-        emp.name,
-        slip.month,
-        netSalary
-      );
-
-      // ===============================
-      // SEND EMAIL
-      // ===============================
-
-      await sendEmail(
-        emp.email,
-        `Salary Slip - ${slip.month}`,
-        html,
-        null,
-        pdfData
-      );
-
-      slip.sent = true;
-      await slip.save();
-
-      // ===============================
-      // CREATE INBOX MESSAGE
-      // ===============================
-
-      await createMessage({
-        sender: "Admin",
-        receiver: emp._id,
-        type: "payroll",
-        message: `Salary slip for ${slip.month} has been sent to your email`
-      });
-
-      const io = req.app.get("io");
-
-      io.emit("salarySent", {
-        employee: emp.name,
-        month: slip.month
-      });
-
-      res.json({ msg: "Email sent successfully" });
-
+    await slip.save();
+    
+    await createMessage({
+      sender: "Admin",
+      receiver: slip.employee._id,
+      type: "payroll",
+      message: `Salary slip for ${slip.month} has been sent to your email`
     });
 
-    // ===============================
-    // PDF CONTENT
-    // ===============================
+    const io = req.app.get("io");
+    
+    io.emit("salarySent", {
+      employee: emp.name,
+      month: slip.month
+    });
 
-    doc.fontSize(20).text("OPERIX Salary Slip", { align: "center" });
 
-    doc.moveDown();
-
-    doc.fontSize(12).text(`Employee: ${emp.name}`);
-    doc.text(`Month: ${slip.month}`);
-    doc.text(`Salary: ₹${netSalary}`);
-
-    doc.end();
+    res.json({ msg: "Email sent successfully" });
 
   } catch (err) {
 
-    console.error(err);
     res.status(500).json({ error: err.message });
 
   }
+
 });
 
 

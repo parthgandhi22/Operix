@@ -38,7 +38,7 @@ function generateSalarySlip(user, salaryData) {
   doc
     .fontSize(24)
     .fillColor("#333")
-    .text("OPERIX", { align: "center" });
+    .text("CONSOLE BMS", { align: "center" });
 
   doc
     .fontSize(16)
