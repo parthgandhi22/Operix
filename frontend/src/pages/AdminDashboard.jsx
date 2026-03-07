@@ -459,7 +459,7 @@ function AdminDashboard() {
 
         </div>
 
-          {/* ===== Burn Rate Prediction ===== */}
+          {/* ===== Burn Rate Prediction =====
 
           <div id="cash" className="section" style={{ marginTop: "40px" }}>
 
@@ -472,7 +472,7 @@ function AdminDashboard() {
 
             <BurnRateChart />
 
-          </div>
+          </div> */}
 
       </div>
       
