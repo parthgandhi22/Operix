@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 async function sendEmail(to, subject, htmlContent, attachmentPath = null) {
 
   const mailOptions = {
-    from: `"CONSOLE BMS HR" <${process.env.EMAIL_USER}>`,
+    from: `"OPERIX" <${process.env.EMAIL_USER}>`,
     to: to,
     subject: subject,
     html: htmlContent

@@ -11,7 +11,7 @@ router.post("/test", async (req, res) => {
 
     await sendEmail(
       email,
-      "Test Email from BMS",
+      "Test Email from Operix",
       "Hello! This email was sent from your Business Management System."
     );
 
