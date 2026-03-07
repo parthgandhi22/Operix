@@ -92,12 +92,28 @@ function BurnRateChart(){
             data={chartData}
             options={{
               responsive:true,
-              maintainAspectRatio:false
+              maintainAspectRatio:false,
+              plugins:{
+                legend:{
+                  labels:{
+                    color:"#000",
+                    boxWidth:20
+                  }
+                }
+              }
             }}
           />
 
         </div>
 
+        
+
+      )}
+
+      {chartData && (
+        <p>
+          Runway: {chartData.datasets[0].data.findIndex(v => v <= 0)} months
+        </p>
       )}
 
     </div>

@@ -6,7 +6,7 @@ function salaryEmailTemplate(name, month, netSalary) {
     <div style="max-width:600px; margin:auto; background:white; border-radius:8px; overflow:hidden">
 
       <div style="background:#1f2937; color:white; padding:20px; text-align:center">
-        <h2 style="margin:0">CONSOLE BMS</h2>
+        <h2 style="margin:0">OPERIX</h2>
         <p style="margin:0; font-size:13px">Business Management System</p>
       </div>
 
@@ -41,7 +41,7 @@ function salaryEmailTemplate(name, month, netSalary) {
         <p>
           Regards,<br>
           <b>HR Department</b><br>
-          CONSOLE BMS
+          OPERIX
         </p>
 
       </div>
@@ -53,7 +53,7 @@ function salaryEmailTemplate(name, month, netSalary) {
           text-align:center;
           color:#6b7280
       ">
-        This is an automated email from CONSOLE BMS.<br>
+        This is an automated email from OPERIX.<br>
         Please do not reply to this email.
       </div>
 

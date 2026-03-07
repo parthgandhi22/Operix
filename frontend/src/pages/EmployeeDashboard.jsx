@@ -91,10 +91,20 @@ function EmployeeDashboard() {
   // Mark message as read
   // ===============================
   const markAsRead = async (id) => {
+
+    const message = messages.find(m => m._id === id);
+    if(message?.isRead) return;
+    // instant UI update
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg._id === id ? { ...msg, isRead: true } : msg
+      )
+    );
+
+    setUnreadCount((prev) => Math.max(prev - 1, 0));
+
     try {
       await axios.patch(`/messages/read/${id}`);
-      fetchMessages();
-      fetchUnread();
     } catch (err) {
       console.error(err);
     }
@@ -247,13 +257,13 @@ function EmployeeDashboard() {
 
   return (
     <>
-      <Navbar role="Employee" />
+      <Navbar role="employee" />
 
       <div className="kanban-container">
 
         {/* ===== TOP BAR ===== */}
 
-        <div className="dashboard-topbar">
+        <div  id="kanban" className="dashboard-topbar">
 
           <div className="dashboard-title">
             <h1>My Kanban Board</h1>
@@ -359,7 +369,7 @@ function EmployeeDashboard() {
 
         {/* ===== INBOX ===== */}
 
-        <div className="inbox-section">
+        <div id="inbox" className="inbox-section">
 
           <h2>
             Inbox
@@ -410,7 +420,7 @@ function EmployeeDashboard() {
 
         {/* ===== SALARY SLIPS ===== */}
 
-        <div className="salary-section">
+        <div id="salary-slips" className="salary-section">
 
           <h2>Recent Salary Slips</h2>
 

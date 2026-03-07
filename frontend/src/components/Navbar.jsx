@@ -42,7 +42,7 @@ function Navbar({ role }) {
       {/* LEFT SIDE */}
       <div className="navbar-left">
 
-        <h2 className="logo">CONSOLE</h2>
+        <h2 className="logo">OPERIX</h2>
 
         {role === "admin" && (
           <NavLink to="/dashboard/admin" className="nav-link">
@@ -86,6 +86,27 @@ function Navbar({ role }) {
             Cash Prediction
           </button>
 
+        </div>
+
+      )}
+
+      {/* EMPLOYEE TABS */}
+      {role === "employee" && location.pathname.includes("/dashboard/employee") && (
+
+        <div className="navbar-tabs">
+
+          <button onClick={() => scrollTo("kanban")}>
+            Kanban Board
+          </button>
+
+          <button onClick={() => scrollTo("inbox")}>
+            Inbox
+          </button>
+
+          <button onClick={() => scrollTo("salary-slips")}>
+            Salary Slips
+          </button>
+          
         </div>
 
       )}
